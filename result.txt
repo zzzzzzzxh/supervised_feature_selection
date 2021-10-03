@@ -1,0 +1,71 @@
+0 fisher_score elapsed time : 0.2078719139099121
+1 fisher_score elapsed time : 0.2116069793701172
+2 fisher_score elapsed time : 0.21046996116638184
+method fisher_score
+Dataset: isolet
+Selected feature: 100
+Average accuracy: 0.8066239316239315
+
+0 fisher_score elapsed time : 8.641191005706787
+1 fisher_score elapsed time : 7.625237941741943
+2 fisher_score elapsed time : 7.600728988647461
+method fisher_score
+Dataset: har
+Selected feature: 100
+Average accuracy: 0.9375636240244316
+
+
+
+0 ll_l21 elapsed time : 0.03132319450378418
+1 ll_l21 elapsed time : 0.0109100341796875
+2 ll_l21 elapsed time : 0.010938882827758789
+method ll_l21
+Dataset: isolet
+Selected feature: 100
+Average accuracy: 0.6442307692307693
+
+0 ll_l21 elapsed time : 0.03171396255493164
+1 ll_l21 elapsed time : 0.02870488166809082
+2 ll_l21 elapsed time : 0.028065919876098633
+method ll_l21
+Dataset: har
+Selected feature: 100
+Average accuracy: 0.8578215134034611
+
+
+
+0 f_score elapsed time : 0.026584148406982422
+1 f_score elapsed time : 0.011322975158691406
+2 f_score elapsed time : 0.01117706298828125
+method f_score
+Dataset: isolet
+Selected feature: 100
+Average accuracy: 0.8044871794871794
+
+0 f_score elapsed time : 0.08607888221740723
+1 f_score elapsed time : 0.07189798355102539
+2 f_score elapsed time : 0.06947803497314453
+method f_score
+Dataset: har
+Selected feature: 100
+Average accuracy: 0.9375636240244316
+
+
+
+
+
+
+
+
+
+
+
+
+
+0 RFS elapsed time : 22.563251972198486
+1 RFS elapsed time : 18.287621021270752
+2 RFS elapsed time : 17.802414178848267
+method RFS
+Dataset: isolet
+Selected feature: 100
+Average accuracy: 0.8290598290598291

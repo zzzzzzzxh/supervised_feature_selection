@@ -1,0 +1,85 @@
+
+------------------------------------------------------------------
+Method = fisher_score
+Dataset = isolet
+X_train shape = (1248, 617)
+X_test shape = (312, 617)
+y_train shape = (1248,)
+y_test shape = (312,)
+------------------------------------------------------------------
+0 fisher_score elapsed time : 0.20676207542419434
+1 fisher_score elapsed time : 0.19848299026489258
+2 fisher_score elapsed time : 0.2075350284576416
+Selected feature:100
+Average accuracy:0.8044871794871794
+------------------------------------------------------------------
+Method = ll_l21
+Dataset = isolet
+X_train shape = (1248, 617)
+X_test shape = (312, 617)
+y_train shape = (1248,)
+y_test shape = (312,)
+------------------------------------------------------------------
+0 ll_l21 elapsed time : 0.01265406608581543
+1 ll_l21 elapsed time : 0.010657787322998047
+2 ll_l21 elapsed time : 0.010640859603881836
+Selected feature:100
+Average accuracy:0.6442307692307693
+------------------------------------------------------------------
+Method = f_score
+Dataset = isolet
+X_train shape = (1248, 617)
+X_test shape = (312, 617)
+y_train shape = (1248,)
+y_test shape = (312,)
+------------------------------------------------------------------
+0 f_score elapsed time : 0.016408920288085938
+1 f_score elapsed time : 0.01030111312866211
+2 f_score elapsed time : 0.010277986526489258
+Selected feature:100
+Average accuracy:0.8044871794871794
+------------------------------------------------------------------
+Method = fisher_score
+Dataset = har
+X_train shape = (7352, 561)
+X_test shape = (2947, 561)
+y_train shape = (7352,)
+y_test shape = (2947,)
+------------------------------------------------------------------
+0 fisher_score elapsed time : 7.767221212387085
+1 fisher_score elapsed time : 8.059185028076172
+2 fisher_score elapsed time : 7.788938045501709
+Selected feature:100
+Average accuracy:0.9375636240244316
+------------------------------------------------------------------
+Method = ll_l21
+Dataset = har
+X_train shape = (7352, 561)
+X_test shape = (2947, 561)
+y_train shape = (7352,)
+y_test shape = (2947,)
+------------------------------------------------------------------
+0 ll_l21 elapsed time : 0.06176304817199707
+1 ll_l21 elapsed time : 0.02755904197692871
+2 ll_l21 elapsed time : 0.02765798568725586
+Selected feature:100
+Average accuracy:0.8578215134034611
+------------------------------------------------------------------
+Method = f_score
+Dataset = har
+X_train shape = (7352, 561)
+X_test shape = (2947, 561)
+y_train shape = (7352,)
+y_test shape = (2947,)
+------------------------------------------------------------------
+0 f_score elapsed time : 0.07803106307983398
+1 f_score elapsed time : 0.06883001327514648
+2 f_score elapsed time : 0.0659639835357666
+Selected feature:100
+Average accuracy:0.9375636240244316
++--------+--------------------+--------------------+--------------------+
+|        |    fisher_score    |       ll_l21       |      f_score       |
++--------+--------------------+--------------------+--------------------+
+| isolet | 0.8044871794871794 | 0.6442307692307693 | 0.8044871794871794 |
+|  har   | 0.9375636240244316 | 0.8578215134034611 | 0.9375636240244316 |
++--------+--------------------+--------------------+--------------------+

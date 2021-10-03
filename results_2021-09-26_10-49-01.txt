@@ -1,0 +1,23 @@
+
+------------------------------------------------------------------
+Method = CFS
+Dataset = isolet
+X_train shape = (1248, 617)
+X_test shape = (312, 617)
+y_train shape = (1248,)
+y_test shape = (312,)
+------------------------------------------------------------------
+0 CFS elapsed time : 9042.26174902916
+1 CFS elapsed time : 9215.344329833984
+2 CFS elapsed time : 9754.241288900375
+Selected feature:100
+Average accuracy:0.6794871794871794
+------------------------------------------------------------------
+Method = CFS
+Dataset = har
+X_train shape = (7352, 561)
+X_test shape = (2947, 561)
+y_train shape = (7352,)
+y_test shape = (2947,)
+------------------------------------------------------------------
+0 CFS elapsed time : 10687.620480060577
