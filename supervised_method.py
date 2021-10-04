@@ -109,8 +109,8 @@ def select_features(method, X, y, k):
 
 def main():
     # methods = ['fisher_score','ll_l21','f_score','RFS','ICAP','CIFE']
-    methods = ['fisher_score', 'll_l21','ICAP','CIFE']
-    # methods = ['fisher_score', 'll_l21']
+    # methods = ['fisher_score', 'll_l21','ICAP','CIFE']
+    methods = ['fisher_score', 'll_l21']
     # methods = ['RFS']
     # methods = ['CIFE']
     #methods = ['CMIM']
@@ -121,8 +121,8 @@ def main():
     # methods = ['svm_backward']
 
     evaluate_methods=['KNN','ET','SVC']
-    # dataset = ['isolet', 'har']
-    dataset = ['coil20']
+    dataset = ['isolet', 'har','coil20']
+    # dataset = ['coil20']
     selected_list = [10, 20, 30, 40, 50, 75, 100, 125,150, 175, 200]
     color_list=['b','g','r','c','m','y','k']
 
@@ -143,38 +143,41 @@ def main():
             clf = KNeighborsClassifier(n_neighbors=1, algorithm='brute', n_jobs=1)
             clf.fit(X_train, y_train)
             y_predict = clf.predict(X_test)
-            baseline.append(float(accuracy_score(y_test, y_predict)))
+            baseline.append((accuracy_score(y_test, y_predict)))
 
             clf = ExtraTreesClassifier(n_estimators=50, n_jobs=-1)
             clf.fit(X_train, y_train)
             y_predict = clf.predict(X_test)
-            baseline.append(float(accuracy_score(y_test, y_predict)))
+            baseline.append((accuracy_score(y_test, y_predict)))
 
             clf = svm.SVC()
             clf.fit(X_train, y_train)
             y_predict = clf.predict(X_test)
-            baseline.append(float(accuracy_score(y_test, y_predict)))
+            baseline.append((accuracy_score(y_test, y_predict)))
 
+            for number in range(10):
+                KNNacc[i].append([])
+                ETacc[i].append([])
+                SVCacc[i].append([])
+                for k in selected_list:
+                    idx = select_features(methods[i], X_train, y_train, k)
+                    selected_features_train = X_train[:, idx[0:k]]
+                    selected_features_test = X_test[:, idx[0:k]]
 
-            for k in selected_list:
-                idx = select_features(methods[i], X_train, y_train, k)
-                selected_features_train = X_train[:, idx[0:k]]
-                selected_features_test = X_test[:, idx[0:k]]
+                    clf = KNeighborsClassifier(n_neighbors=1, algorithm='brute', n_jobs=1)
+                    clf.fit(selected_features_train, y_train)
+                    y_predict = clf.predict(selected_features_test)
+                    KNNacc[i][number].append(float(accuracy_score(y_test, y_predict)))
 
-                clf = KNeighborsClassifier(n_neighbors=1, algorithm='brute', n_jobs=1)
-                clf.fit(selected_features_train, y_train)
-                y_predict = clf.predict(selected_features_test)
-                KNNacc[i].append(float(accuracy_score(y_test, y_predict)))
+                    clf = ExtraTreesClassifier(n_estimators=50, n_jobs=-1)
+                    clf.fit(selected_features_train, y_train)
+                    y_predict = clf.predict(selected_features_test)
+                    ETacc[i][number].append(float(accuracy_score(y_test, y_predict)))
 
-                clf = ExtraTreesClassifier(n_estimators=50, n_jobs=-1)
-                clf.fit(selected_features_train, y_train)
-                y_predict = clf.predict(selected_features_test)
-                ETacc[i].append(float(accuracy_score(y_test, y_predict)))
-
-                clf = svm.SVC()
-                clf.fit(selected_features_train, y_train)
-                y_predict = clf.predict(selected_features_test)
-                SVCacc[i].append(float(accuracy_score(y_test, y_predict)))
+                    clf = svm.SVC()
+                    clf.fit(selected_features_train, y_train)
+                    y_predict = clf.predict(selected_features_test)
+                    SVCacc[i][number].append(float(accuracy_score(y_test, y_predict)))
 
             end = time.time()
             print(methods[i],name,str(end-start))
@@ -184,8 +187,11 @@ def main():
 
             for j in range(len(methods)):
                 # draw picture
-                plt.plot(selected_list, acc_set[i][j], color=color_list[j], label=methods[j], marker='o',linestyle='-')
-                plt.axhline(baseline[i], label='full features')
+                mm=np.mean(acc_set[i][j],axis=0)
+                vv = np.var(acc_set[i][j], axis=0)
+                plt.plot(selected_list, mm, color=color_list[j], label=methods[j], marker='o',linestyle='--')
+                plt.fill_between(selected_list,mm-vv,mm+vv,alpha=0.3,facecolor=color_list[j])
+            plt.axhline(baseline[i], label='full features')
             plt.axis([0, 200, 0.1, 1.0])
             plt.xlabel('Features selected')
             plt.ylabel(evaluate_methods[i]+' accuracy')
