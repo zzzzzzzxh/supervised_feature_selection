@@ -110,6 +110,7 @@ def select_features(method, X, y, k):
 def main():
     # methods = ['fisher_score','ll_l21','f_score','RFS','ICAP','CIFE']
     methods = ['fisher_score', 'll_l21','ICAP','CIFE']
+    # methods = ['fisher_score', 'll_l21']
     # methods = ['RFS']
     # methods = ['CIFE']
     #methods = ['CMIM']
@@ -120,7 +121,8 @@ def main():
     # methods = ['svm_backward']
 
     evaluate_methods=['KNN','ET','SVC']
-    dataset = ['isolet', 'har']
+    # dataset = ['isolet', 'har']
+    dataset = ['coil20']
     selected_list = [10, 20, 30, 40, 50, 75, 100, 125,150, 175, 200]
     color_list=['b','g','r','c','m','y','k']
 
@@ -129,6 +131,9 @@ def main():
         ETacc = []
         SVCacc = []
         for i in range(len(methods)):
+
+            start = time.time()
+
             KNNacc.append([])
             ETacc.append([])
             SVCacc.append([])
@@ -153,6 +158,9 @@ def main():
                 clf.fit(selected_features_train, y_train)
                 y_predict = clf.predict(selected_features_test)
                 SVCacc[i].append(float(accuracy_score(y_test, y_predict)))
+
+            end = time.time()
+            print(methods[i],name,str(end-start))
         acc_set=[KNNacc,ETacc,SVCacc]
         # draw picture
         for i in range(len(evaluate_methods)):
@@ -166,7 +174,7 @@ def main():
             plt.ylabel(evaluate_methods[i]+' accuracy')
             plt.title(name)
             plt.legend()
-            plt.savefig('picture/' + name + '_' + evaluate_methods[i] + '.png')
+            plt.savefig('picture/' + name + '_' + evaluate_methods[i] + '_' + str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + '.png')
             plt.show()
 
 
