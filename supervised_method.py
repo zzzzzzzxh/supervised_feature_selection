@@ -130,6 +130,7 @@ def main():
         KNNacc = []
         ETacc = []
         SVCacc = []
+        baseline = []
         for i in range(len(methods)):
 
             start = time.time()
@@ -138,6 +139,22 @@ def main():
             ETacc.append([])
             SVCacc.append([])
             X_train, X_test, y_train, y_test = load_data(name)
+            #create baseline use all features
+            clf = KNeighborsClassifier(n_neighbors=1, algorithm='brute', n_jobs=1)
+            clf.fit(X_train, y_train)
+            y_predict = clf.predict(X_test)
+            baseline.append(float(accuracy_score(y_test, y_predict)))
+
+            clf = ExtraTreesClassifier(n_estimators=50, n_jobs=-1)
+            clf.fit(X_train, y_train)
+            y_predict = clf.predict(X_test)
+            baseline.append(float(accuracy_score(y_test, y_predict)))
+
+            clf = svm.SVC()
+            clf.fit(X_train, y_train)
+            y_predict = clf.predict(X_test)
+            baseline.append(float(accuracy_score(y_test, y_predict)))
+
 
             for k in selected_list:
                 idx = select_features(methods[i], X_train, y_train, k)
@@ -168,7 +185,7 @@ def main():
             for j in range(len(methods)):
                 # draw picture
                 plt.plot(selected_list, acc_set[i][j], color=color_list[j], label=methods[j], marker='o',linestyle='-')
-                # plt.axhline(y=0.9729166666666667, label='full features')
+                plt.axhline(baseline[i], label='full features')
             plt.axis([0, 200, 0.1, 1.0])
             plt.xlabel('Features selected')
             plt.ylabel(evaluate_methods[i]+' accuracy')
