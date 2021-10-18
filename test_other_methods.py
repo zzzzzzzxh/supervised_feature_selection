@@ -266,7 +266,7 @@ def eval_subset(train, test):
 
 def select_features(method, X, y, k):
     if method =='MCFS':
-        # construct affinity matrix
+        # construct affinity matrixm
         kwargs = {"metric": "euclidean", "neighborMode": "knn", "weightMode": "heatKernel", "k": 5, 't': 1}
         W = construct_W.construct_W(X, **kwargs)           
         Weight = MCFS.mcfs(X, n_selected_features=k, W=W, n_clusters=10)
@@ -422,7 +422,6 @@ for d in range(len(results_acc)):
             table.append([result_acc[i+1][0]])
         for j in range(num_runs):
             metrics[i,j] = result_acc[i+1][j+1]
-
     mean = np.mean(metrics, axis = 1)
     std = np.std(metrics, axis = 1)
     for i in range(len(mean)):

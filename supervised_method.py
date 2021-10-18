@@ -21,6 +21,8 @@ from skfeature.function.streaming import alpha_investing
 import datetime
 import time
 import numpy as np
+from sklearn import preprocessing
+from lassonet import LassoNetClassifier
 import prettytable as pt
 import matplotlib.pyplot as plt
 
@@ -109,8 +111,8 @@ def select_features(method, X, y, k):
 
 def main():
     # methods = ['fisher_score','ll_l21','f_score','RFS','ICAP','CIFE']
-    # methods = ['fisher_score', 'll_l21','ICAP','CIFE']
-    methods = ['fisher_score', 'll_l21']
+    methods = ['fisher_score', 'll_l21','ICAP','CIFE']
+    # methods = ['fisher_score', 'll_l21']
     # methods = ['RFS']
     # methods = ['CIFE']
     #methods = ['CMIM']
@@ -131,6 +133,11 @@ def main():
         ETacc = []
         SVCacc = []
         baseline = []
+        #load data and scaler
+        X_train, X_test, y_train, y_test = load_data(name)
+        scaler = preprocessing.MinMaxScaler().fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_test = scaler.transform(X_test)
         for i in range(len(methods)):
 
             start = time.time()
@@ -138,7 +145,7 @@ def main():
             KNNacc.append([])
             ETacc.append([])
             SVCacc.append([])
-            X_train, X_test, y_train, y_test = load_data(name)
+
             #create baseline use all features
             clf = KNeighborsClassifier(n_neighbors=1, algorithm='brute', n_jobs=1)
             clf.fit(X_train, y_train)
@@ -155,7 +162,7 @@ def main():
             y_predict = clf.predict(X_test)
             baseline.append((accuracy_score(y_test, y_predict)))
 
-            for number in range(10):
+            for number in range(1):
                 KNNacc[i].append([])
                 ETacc[i].append([])
                 SVCacc[i].append([])
