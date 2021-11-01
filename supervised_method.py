@@ -65,25 +65,18 @@ def load_data(name):
 
     return X_train, X_test, y_train, y_test
 
-def select_features(method, X, y, k):
+def select_features(method, X, y):
 
     if method =='fisher_score':
         score = fisher_score.fisher_score(X, y)
         idx = fisher_score.feature_ranking(score)
     elif method =='CIFE':
         # obtain the index of each feature on the training set
-        idx, _, _ = CIFE.cife(X, y, n_selected_features=k)
+        # idx, _, _ = CIFE.cife(X, y, n_selected_features=k)
+        idx, _, _ = CIFE.cife(X, y)
     elif method =='ICAP':
-        idx, _, _ = ICAP.icap(X, y, n_selected_features=k)
-    elif method =='CMIM':
-        idx, _, _ = CMIM.cmim(X, y, n_selected_features=k)
-    elif method =='CFS':
-        idx = CFS.cfs(X, y)
-    elif method =='DISR':
-        # obtain the index of each feature on the training set
-        idx, _, _ = DISR.disr(X, y, n_selected_features=k)
-    elif method =='FCBF':
-        idx = FCBF.fcbf(X, y, n_selected_features=k)
+        # idx, _, _ = ICAP.icap(X, y, n_selected_features=k)
+        idx, _, _ = ICAP.icap(X, y)
     elif method =='f_score':
         score = f_score.f_score(X, y)
         # rank features in descending order according to score
@@ -99,19 +92,20 @@ def select_features(method, X, y, k):
         Weight, obj, value_gamma = ll_l21.proximal_gradient_descent(X, Y, 0.1, verbose=False)
         # sort the feature scores in an ascending order according to the feature scores
         idx = feature_ranking(Weight)
-    elif method =='decision_tree_backward':
-        idx = decision_tree_backward.decision_tree_backward(X, y, k)
-    elif method =='svm_backward':
-        idx = svm_backward.svm_backward(X, y, k)
-    elif method =='alpha_investing':
-        idx = alpha_investing.alpha_investing(X, y, 0.05, 0.05)
+    elif method =='lassonet':
+        model = LassoNetClassifier(verbose=True)
+        model.fit(X, y)
+        score=(model.feature_importances_.numpy())
+        idx = np.argsort(score,0)
+        idx = idx[::-1]
 
 
     return idx
 
 def main():
     # methods = ['fisher_score','ll_l21','f_score','RFS','ICAP','CIFE']
-    methods = ['fisher_score', 'll_l21','ICAP','CIFE']
+    # methods = ['lassonet']
+    methods = ['lassonet', 'fisher_score', 'll_l21', 'RFS']
     # methods = ['fisher_score', 'll_l21']
     # methods = ['RFS']
     # methods = ['CIFE']
@@ -142,6 +136,8 @@ def main():
 
             start = time.time()
 
+            idx = select_features(methods[i], X_train, y_train)
+
             KNNacc.append([])
             ETacc.append([])
             SVCacc.append([])
@@ -167,7 +163,7 @@ def main():
                 ETacc[i].append([])
                 SVCacc[i].append([])
                 for k in selected_list:
-                    idx = select_features(methods[i], X_train, y_train, k)
+                    # idx = select_features(methods[i], X_train, y_train, k)
                     selected_features_train = X_train[:, idx[0:k]]
                     selected_features_test = X_test[:, idx[0:k]]
 
