@@ -9,15 +9,8 @@ from skfeature.function.information_theoretical_based import CIFE
 from skfeature.function.information_theoretical_based import ICAP
 from skfeature.function.sparse_learning_based import RFS
 from skfeature.utility.sparse_learning import construct_label_matrix, feature_ranking,construct_label_matrix_pan
-from skfeature.function.wrapper import decision_tree_backward
-from skfeature.function.wrapper import svm_backward
-from skfeature.function.information_theoretical_based import CMIM
-from skfeature.function.statistical_based import CFS
 from skfeature.function.statistical_based import f_score
 from skfeature.function.sparse_learning_based import ll_l21
-from skfeature.function.information_theoretical_based import DISR
-from skfeature.function.information_theoretical_based import FCBF
-from skfeature.function.streaming import alpha_investing
 import datetime
 import time
 import numpy as np
@@ -25,6 +18,12 @@ from sklearn import preprocessing
 from lassonet import LassoNetClassifier
 import prettytable as pt
 import matplotlib.pyplot as plt
+import random
+
+seed = 1
+random.seed(seed)
+np.random.seed(seed)
+
 
 
 def load_data(name):
@@ -51,6 +50,12 @@ def load_data(name):
         mat = loadmat('data/isolet.mat')
         X = mat['X']  # data
         # X = X.astype(float)
+        y = mat['Y']  # label
+        y = y[:, 0]
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+    elif name == "MNIST":
+        mat = loadmat('data/isolet.mat')
+        X = mat['X']  # data
         y = mat['Y']  # label
         y = y[:, 0]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
@@ -104,24 +109,19 @@ def select_features(method, X, y):
 
 def main():
     # methods = ['fisher_score','ll_l21','f_score','RFS','ICAP','CIFE']
-    # methods = ['lassonet']
+    # methods = ['fisher_score','lassonet','ll_l21']
     methods = ['lassonet', 'fisher_score', 'll_l21', 'RFS']
-    # methods = ['fisher_score', 'll_l21']
-    # methods = ['RFS']
-    # methods = ['CIFE']
-    #methods = ['CMIM']
-    # methods = ['CFS']
-    # methods =['ICAP']
-    # methods = ['fisher_score']
-    # methods = ['decision_tree_backward']
-    # methods = ['svm_backward']
 
     evaluate_methods=['KNN','ET','SVC']
-    dataset = ['isolet', 'har','coil20']
+    dataset = ['isolet', 'har','coil20','MNIST']
+    # dataset = ['MNIST']
     # dataset = ['coil20']
-    selected_list = [10, 20, 30, 40, 50, 75, 100, 125,150, 175, 200]
+    # selected_list = [10, 20, 30, 40, 50, 75, 100, 125,150, 175, 200]
+    selected_list = [25,50,75,100,150,200]
     color_list=['b','g','r','c','m','y','k']
 
+    filename = "results_"
+    file1 = open(filename + str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + ".txt", "a")
     for name in dataset:
         KNNacc = []
         ETacc = []
@@ -136,7 +136,7 @@ def main():
 
             start = time.time()
 
-            idx = select_features(methods[i], X_train, y_train)
+
 
             KNNacc.append([])
             ETacc.append([])
@@ -157,8 +157,9 @@ def main():
             clf.fit(X_train, y_train)
             y_predict = clf.predict(X_test)
             baseline.append((accuracy_score(y_test, y_predict)))
-
-            for number in range(1):
+            # run 3 times to get var and mean
+            for number in range(3):
+                idx = select_features(methods[i], X_train, y_train)
                 KNNacc[i].append([])
                 ETacc[i].append([])
                 SVCacc[i].append([])
@@ -202,7 +203,21 @@ def main():
             plt.legend()
             plt.savefig('picture/' + name + '_' + evaluate_methods[i] + '_' + str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + '.png')
             plt.show()
+        #write result to txt
+        file1.write(name+'\n')
+        for j in range(len(methods)):
+            file1.write('method: '+methods[j]+'\n')
+            print('method: ', methods[j])
+            for k in range(len(selected_list)):
+                file1.write('select number: '+ str(selected_list[k])+'\n')
+                print('select number: ', selected_list[k])
+                for i in range(len(evaluate_methods)):
+                    mm = np.mean(acc_set[i][j], axis=0)
+                    file1.write(evaluate_methods[i]+'acc = '+str('{:.3f}'.format(mm[k])) +', ')
+                    print(evaluate_methods[i],'acc = ','{:.3f}'.format(mm[k]))
+                file1.write('\n')
 
+    file1.close()
 
 
 
