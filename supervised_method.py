@@ -16,7 +16,6 @@ import time
 import numpy as np
 from sklearn import preprocessing
 from lassonet import LassoNetClassifier
-import prettytable as pt
 import matplotlib.pyplot as plt
 import random
 
@@ -54,11 +53,19 @@ def load_data(name):
         y = y[:, 0]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
     elif name == "MNIST":
-        mat = loadmat('data/isolet.mat')
-        X = mat['X']  # data
-        y = mat['Y']  # label
-        y = y[:, 0]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+
+        # mat = loadmat('data/mnist-original.mat')
+        # X = mat['data']  # data
+        # y = mat['label']  # label
+        # y = y[:, 0]
+        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+
+        import tensorflow as tf
+        (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
+        X_train = X_train.reshape((X_train.shape[0], X_train.shape[1] * X_train.shape[2]))
+        X_test = X_test.reshape((X_test.shape[0], X_test.shape[1] * X_test.shape[2]))
+        X_train = X_train.astype('float32')
+        X_test = X_test.astype('float32')
 
 
     elif name == "har":
@@ -109,14 +116,17 @@ def select_features(method, X, y):
 
 def main():
     # methods = ['fisher_score','ll_l21','f_score','RFS','ICAP','CIFE']
-    # methods = ['fisher_score','lassonet','ll_l21']
-    methods = ['lassonet', 'fisher_score', 'll_l21', 'RFS']
-
+    methods = ['lassonet', 'fisher_score', 'll_l21',]
+    # set the methods
+    # methods = ['RFS']
     evaluate_methods=['KNN','ET','SVC']
-    dataset = ['isolet', 'har','coil20','MNIST']
+    # set the dataset
+    # dataset = ['isolet', 'har','coil20'] #without MNIST
+    dataset = ['isolet', 'har','coil20','MNIST'] #MNIST
     # dataset = ['MNIST']
-    # dataset = ['coil20']
     # selected_list = [10, 20, 30, 40, 50, 75, 100, 125,150, 175, 200]
+
+    # set the feature number
     selected_list = [25,50,75,100,150,200]
     color_list=['b','g','r','c','m','y','k']
 
@@ -129,6 +139,17 @@ def main():
         baseline = []
         #load data and scaler
         X_train, X_test, y_train, y_test = load_data(name)
+        indices=np.arange(X_train.shape[0])
+        np.random.shuffle(indices)
+        X_train = X_train[indices]
+        y_train = y_train[indices]
+
+        indices = np.arange(X_test.shape[0])
+        np.random.shuffle(indices)
+        X_test = X_test[indices]
+        y_test = y_test[indices]
+
+
         scaler = preprocessing.MinMaxScaler().fit(X_train)
         X_train = scaler.transform(X_train)
         X_test = scaler.transform(X_test)
@@ -222,82 +243,5 @@ def main():
 
 
 
-
-
-
-
-
-
-
-
-
-    # filename = "results_"
-    # file1 = open(filename + str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + ".txt","a")
-    # dataset =['isolet','har']
-    # tb = pt.PrettyTable([""]+methods)
-    # # tb.field_names = methods
-    #
-    # for name in dataset:
-    #     acc_table=[]
-    #     acc_table.append(name)
-    #     for method in methods:
-    #         # perform evaluation on classification task
-    #         clf = svm.LinearSVC()  # linear SVM
-    #
-    #
-    #         X_train, X_test, y_train, y_test = load_data(name)
-    #
-    #         file1.write("\n------------------------------------------------------------------")
-    #         file1.write("\nMethod = " + method)
-    #         file1.write("\nDataset = " + name)
-    #         file1.write("\nX_train shape = " + str(X_train.shape))
-    #         file1.write("\nX_test shape = " + str(X_test.shape))
-    #         file1.write("\ny_train shape = " + str(y_train.shape))
-    #         file1.write("\ny_test shape = " + str(y_test.shape))
-    #         file1.write("\n------------------------------------------------------------------")
-    #
-    #         k = 100
-    #         correct = 0
-    #         for j in range(3):
-    #             start = time.time()
-    #
-    #             idx = select_features(method, X_train, y_train, k)
-    #
-    #             # obtain the dataset on the selected features
-    #             selected_features_train = X_train[:, idx[0:k]]
-    #             selected_features_test = X_test[:, idx[0:k]]
-    #             end = time.time()
-    #             print(str(j) + ' ' + method + " elapsed time : " + str(end - start))
-    #             file1.write("\n" + str(j) + ' ' + method + " elapsed time : " + str(end - start))
-    #
-    #             # train a classification model with the selected features on the training dataset
-    #             clf.fit(selected_features_train, y_train)
-    #
-    #             # predict the class labels of test data
-    #             y_predict = clf.predict(selected_features_test)
-    #
-    #             # obtain the classification accuracy on the test data
-    #             acc = accuracy_score(y_test, y_predict)
-    #             correct = correct + acc
-    #
-    #         print('method', method)
-    #         print('Dataset:', name)
-    #         print('Selected feature:', k)
-    #         print('Average accuracy:', float(correct) / 3)
-    #         file1.write('\nSelected feature:' + str(k))
-    #         file1.write('\nAverage accuracy:' + str(float(correct) / 3))
-    #         acc_table.append(float(correct) / 3)
-    #
-    #     tb.add_row(acc_table)
-    #
-    # print(tb)
-    # file1.write('\n'+str(tb))
-    # file1.close()
-
-
-
 if __name__ == '__main__':
     main()
-
-
-    # time: 10687.620480060577
